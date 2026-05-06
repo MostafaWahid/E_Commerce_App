@@ -2,7 +2,7 @@
 
 # --- Stage 1: build the SPA (Vite) ---
 # Produces static HTML/JS/CSS under dist/ — copied into the final image as ./public.
-FROM node:22-bookworm-slim AS frontend-build
+FROM node:22-bookworm-slim AS client-build
 WORKDIR /app/client
 COPY client/ ./
 # Empty = browser calls /api on the same host as the page (same domain as Express).
@@ -15,7 +15,7 @@ RUN npm install --no-audit --no-fund \
 
   # --- Stage 2: compile the API (TypeScript → JavaScript) ---
 # Produces dist/ with index.js and the rest of the server bundle.
-FROM node:22.15.0 AS backend-build
+FROM node:22.15.0 AS api-build
 WORKDIR /app
 COPY api/ ./
 RUN npm install --no-audit --no-fund \
