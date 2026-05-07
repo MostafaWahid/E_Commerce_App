@@ -18,21 +18,21 @@ app.use(clerkMiddleware)
 
 
 
-const publicDir=path.join(process.cwd(),"public")
-if(fs.existsSync(publicDir)){
+const publicDir = path.join(process.cwd(), "public")
+
+if (fs.existsSync(publicDir)) {
+  // Serve actual physical files (js, css, images)
   app.use(express.static(publicDir))
 
-  app.get('/{*any}',(req,res,next)=>{
-    if(req.method!=='GET'&&req.method!=='HEAD'){
-      next();
-      return
+  // The Catch-all for SPA (Must be the VERY LAST route)
+  app.get('*', (req, res) => {
+    // If it's a GET request and NOT an API call, send the index.html
+    if (!req.path.startsWith("/api") && !req.path.startsWith("/webhooks")) {
+      res.sendFile(path.join(publicDir, "index.html"));
+    } else {
+      // If it IS an API call that got here, it truly doesn't exist
+      res.status(404).json({ error: "API route not found" });
     }
-
-      if (req.path.startsWith("/api") || req.path.startsWith("/webhooks")) {
-      next();
-      return;
-    }
-      res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
   })
 }
 app.listen(env.PORT ,()=>{
