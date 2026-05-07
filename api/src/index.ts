@@ -18,7 +18,9 @@ app.use(clerkMiddleware)
 
 
 
-const publicDir = path.join(process.cwd(), "public")
+const publicDir = path.resolve(process.cwd(), "public");
+console.log("Checking for static files in:", publicDir);
+console.log("Does folder exist?", fs.existsSync(publicDir));
 
 if (fs.existsSync(publicDir)) {
   // Serve actual physical files (js, css, images)
