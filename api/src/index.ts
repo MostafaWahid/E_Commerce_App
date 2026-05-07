@@ -5,6 +5,7 @@ import { clerkMiddleware } from '@clerk/express'
 import { getEnv } from "./lib/env";
 import fs from 'node:fs'
 import path from "node:path";
+import { clerkWebhookHandler } from "./webhooks/clerk";
 const env=getEnv()
 const app=express()
 const rawJson=express.raw({type:'application/json',limit:'1mb'})
