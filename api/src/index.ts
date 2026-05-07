@@ -25,7 +25,7 @@ if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir))
 
   // The Catch-all for SPA (Must be the VERY LAST route)
-  app.get('(.*)', (req, res) => {
+  app.get('/*path', (req, res) => {
     // If it's a GET request and NOT an API call, send the index.html
     if (!req.path.startsWith("/api") && !req.path.startsWith("/webhooks")) {
       res.sendFile(path.join(publicDir, "index.html"));
