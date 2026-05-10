@@ -21,7 +21,7 @@ app.use(cors(
   credentials: true
 }
 ))
-app.use(clerkMiddleware)
+// app.use(clerkMiddleware)
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
