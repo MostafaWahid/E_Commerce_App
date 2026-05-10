@@ -1,7 +1,7 @@
 import express from "express";
 import 'dotenv/config'
 import cors from 'cors'
-import { clerkMiddleware } from '@clerk/express'
+// import { clerkMiddleware } from '@clerk/express'
 import { getEnv } from "./lib/env";
 
 import { clerkWebhookHandler } from "./webhooks/clerk";
