@@ -1,9 +1,10 @@
+
 import {getAuth} from '@clerk/express'
 import { db } from '../../../db/index';
 import { users } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
-
-export const getUserProfile=async (req, res, next) => {
+import type { Request, Response, NextFunction } from "express";
+export const getUserProfile=async (req:Request, res:Response, next:NextFunction) => {
   try {
     const { userId, isAuthenticated } = getAuth(req);
     if (!isAuthenticated || !userId) {
