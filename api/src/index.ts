@@ -5,6 +5,7 @@ import cors from 'cors'
 import { getEnv } from "./lib/env";
 import keepAliveCronJob from "./lib/cron";
 import { clerkWebhookHandler } from "./webhooks/clerk";
+import userRouter from './features/user/user.route'
 const env=getEnv()
 const app=express()
 const rawJson=express.raw({type:'application/json',limit:'1mb'})
@@ -26,7 +27,12 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-
+app.use("/api/users", userRouter);
+// app.use("/api/products", productRouter);
+// app.use("/api/stream", streamRouter);
+// app.use("/api/checkout", chekoutRouter);
+// app.use("/api/admin", adminRouter);
+// app.use("/api/orders", orderRouter);
 
 
 
@@ -34,6 +40,7 @@ app.get("/health", (_req, res) => {
   app.listen(env.PORT, () =>{
     console.log(`listening on port ${env.PORT}`)
     if(env.NODE_ENV==='production'){
+      //this cron job to keep the render server alive 
       keepAliveCronJob.start()
     }
   });
