@@ -6,6 +6,8 @@ import { getEnv } from "./lib/env";
 import keepAliveCronJob from "./lib/cron";
 import { clerkWebhookHandler } from "./webhooks/clerk";
 import userRouter from './features/user/user.route'
+import productRouter from './features/product/product.route'
+import streamRouter from './features/stream/stream.route'
 const env=getEnv()
 const app=express()
 const rawJson=express.raw({type:'application/json',limit:'1mb'})
@@ -28,15 +30,15 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/users", userRouter);
-// app.use("/api/products", productRouter);
-// app.use("/api/stream", streamRouter);
+ app.use("/api/products", productRouter);
+  app.use("/api/stream", streamRouter);
 // app.use("/api/checkout", chekoutRouter);
 // app.use("/api/admin", adminRouter);
 // app.use("/api/orders", orderRouter);
 
 
 
-
+//TODO:add error handler middleware
   app.listen(env.PORT, () =>{
     console.log(`listening on port ${env.PORT}`)
     if(env.NODE_ENV==='production'){

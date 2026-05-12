@@ -12,9 +12,9 @@ export const getUserProfile=async (req:Request, res:Response, next:NextFunction)
       return;
     }
 
-    const user = await db.select().from(users).where(eq(users.clerkUserId,userId))
+    const [row] = await db.select().from(users).where(eq(users.clerkUserId,userId)).limit(1)
 
-    res.json({ user });
+    res.json({ user:row });
   } catch (e) {
     next(e);
   }
