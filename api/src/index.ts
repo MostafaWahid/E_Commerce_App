@@ -3,7 +3,7 @@ import 'dotenv/config'
 import cors from 'cors'
 // import { clerkMiddleware } from '@clerk/express'
 import { getEnv } from "./lib/env";
-
+import keepAliveCronJob from "./lib/cron";
 import { clerkWebhookHandler } from "./webhooks/clerk";
 const env=getEnv()
 const app=express()
@@ -16,7 +16,7 @@ app.use(cors(
   {
   origin: [
     'http://localhost:5173',          // Local Vite
-    'https://e-commerce-app-lime-alpha.vercel.app'     // Your future Vercel URL
+    env.CLIENT_URL
   ],
   credentials: true
 }
@@ -31,6 +31,11 @@ app.get("/health", (_req, res) => {
 
 
 
-if (env.NODE_ENV !== 'production') {
-  app.listen(env.PORT, () =>console.log(`listening on port ${env.PORT}`));
-}
+  app.listen(env.PORT, () =>{
+    console.log(`listening on port ${env.PORT}`)
+    if(env.NODE_ENV==='production'){
+      keepAliveCronJob.start()
+    }
+  });
+
+
