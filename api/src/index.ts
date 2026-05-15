@@ -1,7 +1,8 @@
 import express from "express";
 import 'dotenv/config'
 import cors from 'cors'
-// import { clerkMiddleware } from '@clerk/express'
+import * as Sentry from "@sentry/node";
+ import { clerkMiddleware } from '@clerk/express'
 import { getEnv } from "./lib/env";
 import keepAliveCronJob from "./lib/cron";
 import { clerkWebhookHandler } from "./webhooks/clerk";
@@ -10,6 +11,7 @@ import productRouter from './features/product/product.route'
 import streamRouter from './features/stream/stream.route'
 import checkoutRouter from './features/checkout/checkout.route'
 import { polarWebhookHandler } from "./webhooks/polar";
+import { sentryClerkUserMiddleware } from "./middleware/sentryClerkUser";
 const env=getEnv()
 const app=express()
 const rawJson=express.raw({type:'application/json',limit:'1mb'})
@@ -29,7 +31,8 @@ app.use(cors(
   credentials: true
 }
 ))
-// app.use(clerkMiddleware)
+app.use(clerkMiddleware())
+app.use(sentryClerkUserMiddleware)
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
@@ -41,9 +44,21 @@ app.use("/api/users", userRouter);
 // app.use("/api/admin", adminRouter);
 // app.use("/api/orders", orderRouter);
 
+Sentry.setupExpressErrorHandler(app); 
 
 
-//TODO:add error handler middleware
+app.use((_err:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{
+  const sentryId=(res as express.Response &{sentry?:string}).sentry
+
+
+  res.status(500).json({
+    error:'Internal server error ',
+    ...(sentryId!=='undefined'&&{sentryId}),
+
+  })
+
+})
+
   app.listen(env.PORT, () =>{
     console.log(`listening on port ${env.PORT}`)
     if(env.NODE_ENV==='production'){
