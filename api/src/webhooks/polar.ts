@@ -67,7 +67,7 @@ async function fulfillCheckoutSession(
         session.lines.map((line) => ({
           orderId: order.id,
           productId: line.productId,
-          k
+          quantity: line.quantity,
           unitPriceCents: line.unitPriceCents, 
         })),
       );
