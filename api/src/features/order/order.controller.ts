@@ -1,11 +1,11 @@
 import { getAuth } from "@clerk/express";
-import { getEnv } from "../../lib/env.js";
+import { getEnv } from "../../lib/env";
 import type { NextFunction, Response, Request } from "express";
-import { db } from "../../db/index.js";
-import { orderItems, orders, products, users } from "../../db/schema.js";
+import { db } from "../../db";
+import { orderItems, orders, products, users } from "../../db/schema";
 import { asc, desc, eq, inArray } from "drizzle-orm";
-import { isStaff } from "../../lib/roles.js";
-import { getStreamChatServer, streamChatDisplayName, streamUserId } from "../../lib/stream.js";
+import { isStaff } from "../../lib/roles";
+import { getStreamChatServer, streamChatDisplayName, streamUserId } from "../../lib/stream";
 
 
 
@@ -252,7 +252,7 @@ export async function createVideoInvite(req: Request, res: Response, next: NextF
       attachments: [{
         type:'link',
 
-
+        
         
         title_link: joinUrl,
       },]

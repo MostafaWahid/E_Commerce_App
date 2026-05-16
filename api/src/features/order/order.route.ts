@@ -4,7 +4,7 @@ import {
   createVideoInvite,
   getOrder,
   listOrders,
-} from "./order.controller.js";
+} from "./order.controller";
 
 const router = Router();
 
