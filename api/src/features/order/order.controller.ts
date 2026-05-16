@@ -237,7 +237,7 @@ export async function createVideoInvite(req: Request, res: Response, next: NextF
     const channelId = `order-${order.id}`;
     const channel = server.channel("messaging", channelId, {
       
-      name: `Support · order ${order.id.slice(0, 8)}`,
+     
       created_by_id: customerSid,
     });
 
@@ -249,10 +249,13 @@ export async function createVideoInvite(req: Request, res: Response, next: NextF
     await channel.sendMessage({
       text: `Video call — tap Join below (same link for everyone): ${joinUrl}`,
       user_id: staffStreamUserId,
-      custom: {
-        video_invite: true,
-        join_url: joinUrl,
-      },
+      attachments: [{
+        type:'link',
+
+
+        
+        title_link: joinUrl,
+      },]
     });
 
     res.json({ ok: true, joinUrl });
