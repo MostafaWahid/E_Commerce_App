@@ -1,4 +1,4 @@
-import 'dotenv/config.js'
+import "dotenv/config"
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 const dsn = process.env.SENTRY_DSN;
