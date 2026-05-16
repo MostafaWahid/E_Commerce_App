@@ -40,7 +40,7 @@ export async function getCategories(_req: Request, res: Response, next: NextFunc
 
 export async function getProductBySlug(req: Request, res: Response, next: NextFunction) {
   try {
-    //TODO:SEARCH is to get the categeories from the product better of from seprated table
+    //TODO:SEARCH about this " is to get the categeories from the product better of from seprated table" 
     const [row] = await db
       .select()
       .from(products)
