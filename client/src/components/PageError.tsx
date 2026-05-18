@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-export function PageError({ message, action }) {
+export function PageError({ message, action=null }) {
   return (
     <div className="rounded-box border border-base-300 bg-base-100 p-8 text-center" role="alert">
       <p className="text-base-content/70">{message}</p>
