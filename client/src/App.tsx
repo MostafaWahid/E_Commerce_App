@@ -1,20 +1,20 @@
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
-
+import { Show, SignInButton, SignUpButton, useAuth, UserButton } from '@clerk/react'
+import PageLoader from './components/PageLoader'
+import Layout from './components/Layout'
+import { Route, Routes } from 'react-router'
+import HomePage from './features/Home/HomePage'
 function App() {
-  
-
+const{isLoaded}=  useAuth()
+if(!isLoaded)return <PageLoader/>
   return (
     <>
+    <Layout>
+<Routes>
+  <Route path="/" element={<HomePage />} />
+</Routes>
+    </Layout>
      
-        <header>
-        <Show when="signed-out">
-          <SignInButton mode='modal' />
-          <SignUpButton mode='modal' />
-        </Show>
-        <Show when="signed-in">
-          <UserButton />
-        </Show>
-      </header>
+       
      
     </>
   )

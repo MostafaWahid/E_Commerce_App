@@ -27,7 +27,6 @@ app.use(express.json())
 app.use(cors(
   {
   origin: [
-    'http://localhost:5173',          // Local Vite
     env.CLIENT_URL
   ],
   credentials: true
