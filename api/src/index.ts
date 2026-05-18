@@ -33,11 +33,25 @@ app.use(express.json())
 // }
 // ))
 
+const allowedOrigins = [
+  'http://localhost:5173',                         // Local development
+  'https://e-commerce-app-lime-alpha.vercel.app' // Your production frontend
+];
+
 app.use(cors({
-  origin:[env.CLIENT_URL] , 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-   allowedHeaders: ['Content-Type', 'Authorization', 'baggage', 'sentry-trace'],
-  credentials: true // Allow cookies/auth headers if needed
+  allowedHeaders: ['Content-Type', 'Authorization', 'baggage', 'sentry-trace'],
+  credentials: true
 }));
 app.use(clerkMiddleware())
 app.use(sentryClerkUserMiddleware)
