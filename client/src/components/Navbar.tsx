@@ -12,13 +12,19 @@ import {
   StoreIcon,
 } from "lucide-react";
  import { useCart } from "../store/cart";
-
+interface MeResponse {
+  user: {
+    id: string;
+    email: string;
+    role: "admin" | "support" | "user"; // Using a union for better safety
+  };
+}
 const Navbar = () => {
    const { getToken, isSignedIn } = useAuth();
 
   const { data: meData } = useQuery({
     queryKey: ["me"],
-    queryFn: () => apiFetch("/api/users/me", { getToken }),
+ queryFn: () => apiFetch<MeResponse>("/api/users/me", { getToken }),
     enabled: isSignedIn,
   });
 console.log(meData)

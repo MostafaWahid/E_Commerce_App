@@ -1,6 +1,12 @@
 import { Link } from "react-router";
-
-export function PageError({ message, action=null }) {
+interface PageErrorProps {
+  message: string;
+  action?: {
+    to: string;
+    label: string;
+  } ; // Can be an object, undefined (optional), or null
+}
+export function PageError({ message, action }:PageErrorProps) {
   return (
     <div className="rounded-box border border-base-300 bg-base-100 p-8 text-center" role="alert">
       <p className="text-base-content/70">{message}</p>

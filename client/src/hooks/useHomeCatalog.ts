@@ -1,12 +1,27 @@
 import { useSearchParams } from "react-router";
-import { apiFetch } from "../lib/api.js";
+import { apiFetch } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
-
+interface CategoriesResponse {
+  categories: string[];
+}
+interface Product {
+  id: string | number;
+ slug: string;
+  name: string;
+  category: string;
+  description: string;
+  priceCents: number;
+  imageUrl: string;
+  
+}
+interface ProductsResponse {
+  products: Product[];
+}
 export function useHomeCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get("category")?.trim() ?? "";
 
-  const setCategory = (category) => {
+  const setCategory = (category:string) => {
     const next = new URLSearchParams(searchParams);
 
     if (!category) next.delete("category");
@@ -17,7 +32,7 @@ export function useHomeCatalog() {
 
   const { data: categoriesData, isLoading: loadingCategories } = useQuery({
     queryKey: ["product-categories"],
-    queryFn: () => apiFetch("/api/products/categories"),
+ queryFn: () => apiFetch<CategoriesResponse>("/api/products/categories"),
   });
 
   const {
@@ -27,7 +42,7 @@ export function useHomeCatalog() {
   } = useQuery({
     queryKey: ["products", categoryFilter],
     queryFn: () =>
-      apiFetch(
+      apiFetch<ProductsResponse>(
         categoryFilter
           ? `/api/products?category=${encodeURIComponent(categoryFilter)}`
           : "/api/products",

@@ -3,7 +3,16 @@ import { HomeHero } from "./components/HomeHero";
 import { PageError } from "../../components/PageError";
 import { TrustStrip } from "./components/TrustStrip";
 import { useHomeCatalog } from "../../hooks/useHomeCatalog";
-
+interface Product {
+  id: string | number;
+ slug: string;
+  name: string;
+  category: string;
+  description: string;
+  priceCents: number;
+  imageUrl: string;
+  
+}
 function HomePage() {
   const {
     products,
@@ -44,7 +53,7 @@ function HomePage() {
               ? [1, 2, 3, 4].map((i) => (
                   <div key={i} className="skeleton h-8 w-20 rounded-lg" aria-hidden />
                 ))
-              : categories.map((c) => (
+              : categories.map((c:string) => (
                   <button
                     key={c}
                     type="button"
@@ -73,7 +82,7 @@ function HomePage() {
           </div>
         ) : (
           <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {products.map((p) => (
+            {products.map((p:Product) => (
               <li key={p.id}>
                 <CatalogProductCard product={p} />
               </li>
