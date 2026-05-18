@@ -1,11 +1,21 @@
-export function formatPrice(cents, currency) {
+// 1. Explicitly type cents as a number, and currency as a string
+export function formatPrice(cents: number, currency?: string): string {
   return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: (currency ?? "usd").toUpperCase(),
   }).format(cents / 100);
 }
 
-export function formatOrderWhen(iso, opts = {}) {
+// 2. Define an interface for the optional date parameters object
+interface FormatOrderWhenOptions {
+  dateStyle?: "full" | "long" | "medium" | "short";
+}
+
+// 3. Type 'iso' as a string and type 'opts' with our new interface
+export function formatOrderWhen(
+  iso: string | null | undefined, 
+  opts: FormatOrderWhenOptions = {}
+): string {
   const { dateStyle = "medium" } = opts;
   if (!iso) return "";
 

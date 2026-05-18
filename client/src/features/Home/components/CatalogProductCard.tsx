@@ -3,8 +3,20 @@ import { PlusIcon } from "lucide-react";
 import { formatPrice } from "../../../utils/format.js";
 import { IK_PRESETS, imageKitOptimizedUrl } from "../../../lib/imageKitUrl.js";
 import { useCart } from "../../../store/cart.js"
-
-export function CatalogProductCard({ product }) {
+interface Product {
+  id: string | number;
+ slug: string;
+  name: string;
+  category: string;
+  description: string;
+  priceCents: number;
+  imageUrl: string;
+  currency?: string;
+}
+interface CatalogProductCardProps {
+  product: Product;
+}
+export function CatalogProductCard({ product }:CatalogProductCardProps) {
   const addItem = useCart((s) => s.addItem);
 
   return (
