@@ -24,14 +24,21 @@ app.post("/webhooks/polar", rawJson, (req, res) => {
   void polarWebhookHandler(req, res);
 });
 app.use(express.json())
-app.use(cors(
-  {
-  origin: [
-    env.CLIENT_URL
-  ],
-  credentials: true
-}
-))
+// app.use(cors(
+//   {
+//   origin: [
+//     env.CLIENT_URL
+//   ],
+//   credentials: true
+// }
+// ))
+
+app.use(cors({
+  origin:[env.CLIENT_URL] , 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization', 'baggage', 'sentry-trace'],
+  credentials: true // Allow cookies/auth headers if needed
+}));
 app.use(clerkMiddleware())
 app.use(sentryClerkUserMiddleware)
 app.get("/health", (_req, res) => {
