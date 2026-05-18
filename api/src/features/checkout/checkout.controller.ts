@@ -96,8 +96,8 @@ export async function createCheckout(req: Request, res: Response, next: NextFunc
       })
       .returning();
 
-    const successUrl = `${env.FRONTEND_URL}/checkout/return?checkout_id={CHECKOUT_ID}`;
-    const returnUrl = `${env.FRONTEND_URL}/cart`;
+    const successUrl = `${env.CLIENT_URL}/checkout/return?checkout_id={CHECKOUT_ID}`;
+    const returnUrl = `${env.CLIENT_URL}/cart`;
 
     const checkout = await polarCreateCheckout(env, {
       products: [env.POLAR_CHECKOUT_PRODUCT_ID],
