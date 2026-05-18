@@ -12,7 +12,7 @@ interface Product {
   description: string;
   priceCents: number;
   imageUrl: string;
-  
+  currency?: string;
 }
 interface ProductsResponse {
   products: Product[];
