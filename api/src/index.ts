@@ -33,10 +33,6 @@ app.use(express.json())
 // }
 // ))
 
-const allowedOrigins = [
-  'http://localhost:5173',                         // Local development
-  'https://e-commerce-app-lime-alpha.vercel.app' // Your production frontend
-];
 
 app.use(cors({
   origin:env.CLIENT_URL,
