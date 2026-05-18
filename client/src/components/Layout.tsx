@@ -1,7 +1,7 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-function Layout({ children }) {
+function Layout({ children }:{ children: React.JSX.Element }) {
   return (
     <div className="flex min-h-svh flex-col bg-base-200 text-base-content">
       <Navbar />

@@ -3,10 +3,23 @@ import * as Sentry from "@sentry/react";
 const raw = import.meta.env.VITE_API_URL;
 const base = typeof raw === "string" ? raw.replace(/\/+$/, "") : ""; // remove trailing slashes
 
-// this is an authenticated fetch req that we use to send reqs to our api
-export async function apiFetch(path, opts = {}) {
+// 1. Define an interface for the options parameter
+interface ApiFetchOptions {
+  getToken?: () => Promise<string | null> | string | null;
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | string;
+  body?: unknown;
+}
+
+// 2. Add types to 'path' and 'opts'
+// 3. (Optional but good practice) Define the generic return type <T>
+export async function apiFetch<T>(
+  path: string, 
+  opts: ApiFetchOptions = {}
+): Promise<T> {
   const { getToken, method = "GET", body } = opts;
-  const headers = { "Content-Type": "application/json" };
+  
+  // TypeScript will correctly infer Record<string, string> here
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
 
   if (getToken) {
     const token = await getToken();
@@ -15,7 +28,7 @@ export async function apiFetch(path, opts = {}) {
     }
   }
 
-  let res;
+  let res: Response;
   try {
     res = await fetch(`${base}${path}`, {
       method,
@@ -61,5 +74,5 @@ export async function apiFetch(path, opts = {}) {
     throw err;
   }
 
-  return data;
+  return data as T;
 }

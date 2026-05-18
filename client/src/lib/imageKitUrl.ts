@@ -1,24 +1,33 @@
-// Image optimization is very important for any web application.
-// Optimized images load faster, consume less bandwidth, and improve the overall user experience.
-// On the other hand, unoptimized images load slowly, degrade user experience, increase bounce rates, and negatively impact your business.
 
-// Main idea: the database stores one original image URL, then this file creates optimized versions for different places in the UI.
 
-// Examples:
+// Define the interface for options passed into the URL builders
+export interface ImageKitOptions {
+  w?: number;
+  h?: number;
+  q?: number;
+  f?: string;
+  crop?: "at_max" | "maintain_ratio";
+  watermark?: boolean;
+}
 
-// catalog card needs a medium image
-// cart needs a small thumbnail
-// product page needs a bigger image
-// admin table needs a tiny preview
+// Define the structure of presets used throughout the UI
+export interface ImageKitPreset {
+  w: number;
+  h: number;
+  q: number;
+  f: string;
+}
 
-// Instead of uploading many image sizes, ImageKit can transform the image through the URL.
-// We keep one original image URL in the database; our app uses a lightweight optimization URL, and we show a transformation here.
+interface TextLayerParams {
+  w?: number;
+  h?: number;
+}
 
 /**
  * Text overlay (brand watermark). Chained after base transforms with ":".
  * @see https://imagekit.io/docs/add-overlays-on-images
  */
-function buildNorthwindTextLayer({ w, h }) {
+function buildNorthwindTextLayer({ w, h }: TextLayerParams): string {
   const maxDim = Math.max(w != null && w > 0 ? w : 0, h != null && h > 0 ? h : 0, 200);
   let fs = 28;
   if (maxDim <= 180) fs = 11;
@@ -33,12 +42,12 @@ function buildNorthwindTextLayer({ w, h }) {
  * Build ImageKit transformation path segment (resize, crop, quality, format).
  * @see https://imagekit.io/docs/image-optimization
  * @see https://imagekit.io/docs/image-resize-and-crop
- * @param {{ w?: number; h?: number; q?: number; f?: string; crop?: "at_max" | "maintain_ratio"; watermark?: boolean }} opts
  */
-function buildTrSegment({ w, h, q = 80, f = "auto", crop, watermark = false }) {
-  const parts = [];
+function buildTrSegment({ w, h, q = 80, f = "auto", crop, watermark = false }: ImageKitOptions): string {
+  const parts: string[] = [];
   if (w != null && w > 0) parts.push(`w-${Math.round(w)}`);
   if (h != null && h > 0) parts.push(`h-${Math.round(h)}`);
+  
   // With both w and h, ImageKit defaults to c-maintain_ratio (center crop). For product photos we
   // prefer c-at_max: full image inside the box, no CDN crop; CSS object-cover handles framing.
   if (w != null && w > 0 && h != null && h > 0) {
@@ -47,20 +56,22 @@ function buildTrSegment({ w, h, q = 80, f = "auto", crop, watermark = false }) {
   }
   parts.push(`q-${Math.min(100, Math.max(1, Math.round(q)))}`);
   parts.push(`f-${f}`);
+  
   const base = `tr:${parts.join(",")}`;
   if (!watermark) return base;
   return `${base}:${buildNorthwindTextLayer({ w, h })}`;
 }
 
 /**
- * @param {string} url
- * @returns {boolean}
+ * Checks whether a given string is a valid ImageKit delivery URL.
  */
-function isImageKitDeliveryUrl(url) {
+function isImageKitDeliveryUrl(url: string): boolean {
   try {
     const u = new URL(url);
     if (u.hostname.endsWith("ik.imagekit.io")) return true;
-    const endpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT?.replace(/\/$/, "");
+    
+    // Explicitly casting because import.meta.env values are generally string | undefined
+    const endpoint = (import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string | undefined)?.replace(/\/$/, "");
     if (endpoint && url.startsWith(endpoint)) return true;
     return false;
   } catch {
@@ -71,12 +82,8 @@ function isImageKitDeliveryUrl(url) {
 /**
  * Applies ImageKit URL transformations for smaller, auto-formatted images.
  * Non-ImageKit URLs are returned unchanged (e.g. legacy external images).
- *
- * @param {string | null | undefined} url
- * @param {{ w?: number; h?: number; q?: number; f?: string; crop?: "at_max" | "maintain_ratio"; watermark?: boolean }} [opts]
- * @returns {string | undefined}
  */
-export function imageKitOptimizedUrl(url, opts = {}) {
+export function imageKitOptimizedUrl(url: string | null | undefined, opts: ImageKitOptions = {}): string | undefined {
   if (url == null || url === "") return url ?? undefined;
   if (typeof url !== "string" || !isImageKitDeliveryUrl(url)) return url;
 
@@ -98,7 +105,7 @@ export function imageKitOptimizedUrl(url, opts = {}) {
       return u.toString();
     }
 
-    const endpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT?.replace(/\/$/, "");
+    const endpoint = (import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string | undefined)?.replace(/\/$/, "");
     if (endpoint && url.startsWith(endpoint)) {
       const epUrl = new URL(endpoint);
       const basePath = epUrl.pathname.replace(/\/$/, "") || "";
@@ -123,12 +130,12 @@ export function imageKitOptimizedUrl(url, opts = {}) {
  * Same optimizations as {@link imageKitOptimizedUrl} plus Northwind text overlay (for share/download).
  * Non-ImageKit URLs are returned unchanged.
  */
-export function imageKitWatermarkedUrl(url, opts = {}) {
+export function imageKitWatermarkedUrl(url: string | null | undefined, opts: ImageKitOptions = {}): string | undefined {
   return imageKitOptimizedUrl(url, { ...opts, watermark: true });
 }
 
 /** Presets aligned to layout (2× for retina where useful). */
-export const IK_PRESETS = {
+export const IK_PRESETS: Record<string, ImageKitPreset> = {
   /** Catalog cards ~4:3, max column ~400px */
   catalogCard: { w: 800, h: 600, q: 80, f: "auto" },
   /** Product detail hero */
