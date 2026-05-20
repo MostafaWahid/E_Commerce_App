@@ -35,8 +35,9 @@ app.use(express.json())
 
 
 app.use(cors({
-  origin: 'https://e-commerce-app-lime-alpha.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin:env.CLIENT_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'baggage', 'sentry-trace'],
   credentials: true
 }));
 app.use(clerkMiddleware())
